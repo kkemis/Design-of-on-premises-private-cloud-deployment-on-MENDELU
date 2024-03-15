@@ -1,0 +1,8 @@
+DB = [ BACKEND = "mysql",
+       SERVER  = {{ dbserver }},
+       PORT    = 0,
+       USER    = {{ dbuser }},
+       PASSWD  = {{ dbpassword }},
+       DB_NAME = {{ dbname }},
+       CONNECTIONS = 25,
+       COMPARE_BINARY = "no" ]

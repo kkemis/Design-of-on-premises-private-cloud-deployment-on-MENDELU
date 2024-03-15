@@ -1,0 +1,10 @@
+---
+- name: Install OpenNebula kvm package
+  ansible.builtin.dnf:
+    name:
+      - opennebula-node-kvm
+- name: Restart libvirtd service
+  ansible.builtin.service:
+    name: libvirtd
+    state: restarted
+    enabled: true

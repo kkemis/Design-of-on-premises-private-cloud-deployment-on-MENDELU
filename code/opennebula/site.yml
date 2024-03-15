@@ -1,0 +1,16 @@
+---
+- name: Apply common configuration to all nodes
+  hosts: all
+  become: true
+  roles:
+    - common
+- name: Configure and deploy kvm nodes
+  hosts: kvm_node
+  become: true
+  roles: 
+    - kvm_node
+- name: Configure and deploy front-end
+  hosts: front_end
+  become: true
+  roles:
+    - front_end
