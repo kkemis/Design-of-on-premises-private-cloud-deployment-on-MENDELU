@@ -1,8 +1,8 @@
 [front_end]
-cloud-controller
+master
 
 [kvm_node]
-cloud-node-1
+worker
 
 [all:vars]
 ansible_user=vagrant
