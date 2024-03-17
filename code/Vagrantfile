@@ -1,0 +1,51 @@
+Vagrant.configure("2") do |config|
+    config.vm.box = "almalinux/9"
+
+    config.vm.define "controller" do |controller|
+        controller.vm.hostname = "controller"
+        controller.vm.network "private_network", ip: "192.0.2.4", netmask: "255.255.255.192", virtualbox__intnet: "management"
+        controller.vm.network "forwarded_port", guest: 2616, host: 1234 # sunstone = 2616, cloudstack = 8080
+    end
+
+    config.vm.define "node-1" do |node_1|
+        node_1.vm.hostname = "node-1"
+        node_1.vm.network "private_network", ip: "192.0.2.2", netmask: "255.255.255.192", virtualbox__intnet: "management"
+        node_1.vm.network "private_network", ip: "192.0.2.66", netmask: "255.255.255.192", virtualbox__intnet: "storage"
+        node_1.vm.network "private_network", ip: "192.0.2.130", netmask: "255.255.255.192", virtualbox__intnet: "guest"
+        node_1.vm.network "private_network", ip: "192.0.2.194", netmask: "255.255.255.192"
+    end
+
+    config.vm.define "node-2" do |node_2|
+        node_2.vm.hostname = "node-2"
+        node_2.vm.network "private_network", ip: "192.0.2.3", netmask: "255.255.255.192", virtualbox__intnet: "management"
+        node_2.vm.network "private_network", ip: "192.0.2.67", netmask: "255.255.255.192", virtualbox__intnet: "storage"
+        node_2.vm.network "private_network", ip: "192.0.2.131", netmask: "255.255.255.192", virtualbox__intnet: "guest"
+        node_2.vm.network "private_network", ip: "192.0.2.195", netmask: "255.255.255.192"
+    end
+
+    config.vm.define "monitor" do |monitor|
+        monitor.vm.hostname = "monitor"
+        monitor.vm.network "forwarded_port", guest: 8443, host: 5678 # ceph dashboard
+        monitor.vm.network "private_network", ip: "192.0.2.125", netmask: "255.255.255.192", virtualbox__intnet: "storage"
+    end
+
+    config.vm.define "osd" do |osd|
+        osd.vm.hostname = "osd"
+        osd.vm.network "private_network", ip: "192.0.2.126", netmask: "255.255.255.192", virtualbox__intnet: "storage"
+    end
+
+    config.vm.provider "virtualbox" do |v|
+        v.memory = 4096
+        v.cpus = 2
+        v.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
+    end   
+
+    config.vm.provision "ansible_local" do |compute|
+        compute.playbook = "ansible/opennebula/site.yml"
+        compute.inventory_path = "ansible/hosts"
+    end
+
+    # config.vm.provision "ansible_local" do |storage|
+    #     storage.playbook = "ansible/ceph/site.yml"
+    # end
+end
