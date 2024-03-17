@@ -1,0 +1,15 @@
+[controllers]
+controller
+
+[nodes]
+node-1
+node-2
+
+[monitors]
+monitor
+
+[osds]
+osd
+
+[all:vars]
+ansible_connection=local
