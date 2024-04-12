@@ -1,8 +1,8 @@
 ---
-- name: Update all packages to latest
-  ansible.builtin.dnf:
-    name: "*"
-    state: latest
+# - name: Update all packages to latest
+#   ansible.builtin.dnf:
+#     name: "*"
+#     state: latest
 - name: Add EPEL repo
   ansible.builtin.dnf:
     name:
@@ -16,3 +16,6 @@
     gpgkey: https://downloads.opennebula.io/repo/repo2.key
     gpgcheck: true
     repo_gpgcheck: true
+- name: Disable SELinux
+  ansible.posix.selinux:
+    state: disabled

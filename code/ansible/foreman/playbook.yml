@@ -1,0 +1,32 @@
+---
+- name: "Foreman hosts"
+  hosts: localhost
+  connection: local
+  vars_files:
+    - vars.yml
+  tasks:
+  - name: "Add hosts"
+    theforeman.foreman.host:
+      validate_certs: false
+      username: "admin"
+      password: "szcAAQ5dqJsc8QrM"
+      server_url: "https://theforeman.example.com"
+      name: "{{ item.name }}"
+      hostgroup: hostgroup
+      organization: "Default Organization"
+      location: "Default Location"
+      interfaces_attributes:
+        - type: "interface"
+          primary: true
+          subnet: "management"
+          ip: "{{ item.management_ip }}"
+          mac: " {{ item.management_mac }}"
+        - type: "interface"
+          subnet: "storage"
+          ip: "{{ item.storage_ip }}"
+          mac: "{{ item.storage_mac }}"
+        - type: "interface"
+          subnet: "tenant"
+          ip: "{{ item.tenant_ip }}"
+          mac: "{{ item.tenant_mac }}"
+    loop: "{{ servers }}"

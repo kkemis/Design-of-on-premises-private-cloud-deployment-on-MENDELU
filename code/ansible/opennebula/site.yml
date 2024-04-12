@@ -1,16 +1,16 @@
 ---
 - name: Apply common configuration to all nodes
   hosts: all
-  become: true
+  remote_user: root
   roles:
     - common
-- name: Configure and deploy kvm nodes
-  hosts: nodes
-  become: true
-  roles: 
-    - kvm_node
 - name: Configure and deploy front-end
   hosts: controllers
-  become: true
+  remote_user: root
   roles:
-    - front_end
+    - controller
+- name: Configure and deploy compute
+  hosts: computes
+  remote_user: root
+  roles:
+    - compute

@@ -1,0 +1,141 @@
+---
+- name: Install MySQL server and dependencies
+  ansible.builtin.dnf:
+    name:
+      - mysql
+      - mysql-server
+      - pip
+      - python3-devel
+      - mysql-devel
+      - pkgconfig
+      - gcc
+    enablerepo: crb
+    state: present
+- name: Install mysqlclient for Ansible
+  ansible.builtin.pip:
+    name:
+      - mysqlclient
+- name: Start MySQL database
+  ansible.builtin.service:
+    name: mysqld
+    state: started
+    enabled: true
+- name: Create database for opennebula
+  community.mysql.mysql_db:
+    name: "{{ dbname }}"
+    state: present
+- name: Create OpenNebula MySQL user
+  community.mysql.mysql_user:
+    state: present
+    name: "{{ dbuser }}"
+    password: "{{ dbpassword }}"
+    priv:
+      "{{ dbname }}.*:ALL,GRANT"
+- name: Install OpenNebula front-end packages
+  ansible.builtin.dnf:
+    name:
+      - opennebula
+      - opennebula-sunstone
+      - opennebula-fireedge
+      - opennebula-gate
+      - opennebula-flow
+      - opennebula-provision
+- name: Copy oned.conf
+  ansible.builtin.template:
+    src: oned.conf.j2
+    dest: /etc/one/oned.conf
+    owner: root
+    group: oneadmin
+    mode: "0640"
+- name: Copy oneflow-server.conf
+  ansible.builtin.template:
+    src: oneflow-server.conf.j2
+    dest: /etc/one/oneflow-server.conf
+    owner: root
+    group: oneadmin
+    mode: "0640"
+- name: Copy onegate-server.conf
+  ansible.builtin.template:
+    src: onegate-server.conf.j2
+    dest: /etc/one/onegate-server.conf
+    owner: root
+    group: oneadmin
+    mode: "0640"
+- name: Copy sunstone-server.conf
+  ansible.builtin.template:
+    src: sunstone-server.conf.j2
+    dest: /etc/one/sunstone-server.conf
+    owner: root
+    group: oneadmin
+    mode: "0640"
+# - name: Configure FireEdge
+#   ansible.builtin.lineinfile:
+#     path: /etc/one/sunstone-server.conf
+#     regexp: "^:public_fireedge_endpoint: http://localhost:2616"
+#     line: ":public_fireedge_endpoint: http://{{ endpoint }}:2616"
+# - name: Configure OneGate
+#   ansible.builtin.lineinfile:
+#     path: /etc/one/onegate-server.conf
+#     regexp: "^:host: 127.0.0.1"
+#     line: ":host: 0.0.0.0"
+# - name: Configure OneGate daemon
+#   ansible.builtin.lineinfile:
+#     path: /etc/one/oned.conf
+#     regexp: '^ONEGATE_ENDPOINT="http://localhost:5030"'
+#     line: 'ONEGATE_ENDPOINT="http://{{ endpoint }}:5030"'
+# - name: Configure OneFlow daemon
+#   ansible.builtin.lineinfile:
+#     path: /etc/one/oneflow-server.conf
+#     regexp: "^:host: 127.0.0.1"
+#     line: ":host: 0.0.0.0"
+- name: Copy SSH private key
+  ansible.builtin.copy:
+    src: ../../files/id_rsa
+    dest: /var/lib/one/.ssh/id_rsa
+    owner: oneadmin
+    group: oneadmin
+    mode: "0600"
+- name: Copy SSH public key
+  ansible.builtin.copy:
+    src: ../../files/id_rsa.pub
+    dest: /var/lib/one/.ssh/id_rsa.pub
+    owner: oneadmin
+    group: oneadmin
+    mode: "0600"
+- name: Copy authorized_keys file
+  ansible.builtin.copy:
+    src: ../../files/authorized_keys
+    dest: /var/lib/one/.ssh/authorized_keys
+    owner: oneadmin
+    group: oneadmin
+    mode: "0600"
+- name: Set GUI password
+  ansible.builtin.lineinfile:
+    path: /var/lib/one/.one/one_auth
+    regexp: '^oneadmin:'
+    line: oneadmin:{{ adminpassword }}
+- name: Start opennebula service
+  ansible.builtin.service:
+    name: opennebula
+    state: started
+    enabled: true
+- name: Start opennebula-sunstone service
+  ansible.builtin.service:
+    name: opennebula-sunstone
+    state: started
+    enabled: true
+- name: Start opennebula-fireedge service
+  ansible.builtin.service:
+    name: opennebula-fireedge
+    state: started
+    enabled: true
+- name: Start opennebula-gate service
+  ansible.builtin.service:
+    name: opennebula-gate
+    state: started
+    enabled: true
+- name: Start opennebula-flow service
+  ansible.builtin.service:
+    name: opennebula-flow
+    state: started
+    enabled: true

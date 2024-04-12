@@ -1,0 +1,7 @@
+---
+dbuser: oneadmin
+dbpassword: Ar~\0PRn~$74:5^23#R
+dbname: opennebula
+dbserver: localhost
+endpoint: onetest.example.com
+adminpassword: changeme123

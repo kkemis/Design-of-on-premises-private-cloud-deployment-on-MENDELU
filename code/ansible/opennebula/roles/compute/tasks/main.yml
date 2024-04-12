@@ -1,0 +1,35 @@
+---
+- name: Install OpenNebula kvm package
+  ansible.builtin.dnf:
+    name:
+      - opennebula-node-kvm
+- name: Restart libvirtd service
+  ansible.builtin.service:
+    name: libvirtd
+    state: restarted
+    enabled: true
+- name: Copy SSH private key
+  ansible.builtin.copy:
+    src: ../../files/id_rsa
+    dest: /var/lib/one/.ssh/id_rsa
+    owner: oneadmin
+    group: oneadmin
+    mode: "0600"
+- name: Copy SSH public key
+  ansible.builtin.copy:
+    src: ../../files/id_rsa.pub
+    dest: /var/lib/one/.ssh/id_rsa.pub
+    owner: oneadmin
+    group: oneadmin
+    mode: "0600"
+- name: Copy authorized_keys file
+  ansible.builtin.copy:
+    src: ../../files/authorized_keys
+    dest: /var/lib/one/.ssh/authorized_keys
+    owner: oneadmin
+    group: oneadmin
+    mode: "0600"
+- name: Add iteself to cluster
+  become: true
+  become_user: oneadmin
+  ansible.builtin.shell: ssh oneadmin@{{ endpoint }} "onehost create $HOSTNAME -i kvm -v kvm"

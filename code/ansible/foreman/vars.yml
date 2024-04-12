@@ -1,0 +1,16 @@
+---
+servers:
+  - name: compute1.example.com
+    management_ip: 192.0.2.4
+    management_mac: 52:54:00:2b:d8:ed
+    storage_ip: 192.0.2.65
+    storage_mac: 52:54:00:41:22:f3
+    tenant_ip: 192.0.2.129
+    tenant_mac: 52:54:00:0e:d4:a6
+  - name: compute2.example.com
+    management_ip: 192.0.2.5
+    management_mac: 52:54:00:c5:5b:13
+    storage_ip: 192.0.2.66
+    storage_mac: 52:54:00:d7:75:6d
+    tenant_ip: 192.0.2.130
+    tenant_mac: 52:54:00:6b:ed:ad
