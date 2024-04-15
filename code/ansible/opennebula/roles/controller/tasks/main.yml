@@ -29,8 +29,7 @@
     state: present
     name: "{{ dbuser }}"
     password: "{{ dbpassword }}"
-    priv:
-      "{{ dbname }}.*:ALL,GRANT"
+    priv: "{{ dbname }}.*:ALL,GRANT"
 - name: Install OpenNebula front-end packages
   ansible.builtin.dnf:
     name:
@@ -112,7 +111,7 @@
 - name: Set GUI password
   ansible.builtin.lineinfile:
     path: /var/lib/one/.one/one_auth
-    regexp: '^oneadmin:'
+    regexp: "^oneadmin:"
     line: oneadmin:{{ adminpassword }}
 - name: Start opennebula service
   ansible.builtin.service:
