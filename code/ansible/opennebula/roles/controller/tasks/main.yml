@@ -1,4 +1,7 @@
 ---
+- name: Update system and set-up repos
+  ansible.builtin.include_role:
+    name: common
 - name: Install MySQL server and dependencies
   ansible.builtin.dnf:
     name:
@@ -67,47 +70,9 @@
     owner: root
     group: oneadmin
     mode: "0640"
-# - name: Configure FireEdge
-#   ansible.builtin.lineinfile:
-#     path: /etc/one/sunstone-server.conf
-#     regexp: "^:public_fireedge_endpoint: http://localhost:2616"
-#     line: ":public_fireedge_endpoint: http://{{ endpoint }}:2616"
-# - name: Configure OneGate
-#   ansible.builtin.lineinfile:
-#     path: /etc/one/onegate-server.conf
-#     regexp: "^:host: 127.0.0.1"
-#     line: ":host: 0.0.0.0"
-# - name: Configure OneGate daemon
-#   ansible.builtin.lineinfile:
-#     path: /etc/one/oned.conf
-#     regexp: '^ONEGATE_ENDPOINT="http://localhost:5030"'
-#     line: 'ONEGATE_ENDPOINT="http://{{ endpoint }}:5030"'
-# - name: Configure OneFlow daemon
-#   ansible.builtin.lineinfile:
-#     path: /etc/one/oneflow-server.conf
-#     regexp: "^:host: 127.0.0.1"
-#     line: ":host: 0.0.0.0"
-- name: Copy SSH private key
-  ansible.builtin.copy:
-    src: ../../files/id_rsa
-    dest: /var/lib/one/.ssh/id_rsa
-    owner: oneadmin
-    group: oneadmin
-    mode: "0600"
-- name: Copy SSH public key
-  ansible.builtin.copy:
-    src: ../../files/id_rsa.pub
-    dest: /var/lib/one/.ssh/id_rsa.pub
-    owner: oneadmin
-    group: oneadmin
-    mode: "0600"
-- name: Copy authorized_keys file
-  ansible.builtin.copy:
-    src: ../../files/authorized_keys
-    dest: /var/lib/one/.ssh/authorized_keys
-    owner: oneadmin
-    group: oneadmin
-    mode: "0600"
+- name: Set-up SSH
+  ansible.builtin.include_role:
+    name: ssh
 - name: Set GUI password
   ansible.builtin.lineinfile:
     path: /var/lib/one/.one/one_auth

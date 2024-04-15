@@ -1,16 +1,16 @@
 ---
-- name: Apply common configuration to all nodes
-  hosts: all
-  remote_user: root
-  roles:
-    - common
+# - name: Apply common configuration to all nodes
+#   hosts: all
+#   remote_user: root
+#   roles:
+#     - common
 - name: Configure and deploy front-end
   hosts: controllers
   remote_user: root
   roles:
     - controller
-- name: Configure and deploy compute
-  hosts: computes
-  remote_user: root
-  roles:
-    - compute
+# - name: Configure and deploy compute
+#   hosts: computes
+#   remote_user: root
+#   roles:
+#     - compute
