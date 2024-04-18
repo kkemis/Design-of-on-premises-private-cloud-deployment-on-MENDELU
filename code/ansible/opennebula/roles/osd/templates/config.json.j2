@@ -1,0 +1,6 @@
+{
+    "username": "{{ username }}",
+    "password": "{{ password }}",
+    "monitor": "{{ monitor }}",
+    "ip": "{{hostvars[inventory_hostname]['ansible_'~interface].ipv4.address}}"
+}

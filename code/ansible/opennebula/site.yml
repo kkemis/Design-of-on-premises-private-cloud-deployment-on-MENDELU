@@ -8,9 +8,9 @@
   hosts: controllers
   remote_user: root
   roles:
-    - controller
-# - name: Configure and deploy compute
-#   hosts: computes
-#   remote_user: root
-#   roles:
-#     - compute
+    - monitor
+- name: Configure and deploy compute
+  hosts: computes
+  remote_user: root
+  roles:
+    - osd

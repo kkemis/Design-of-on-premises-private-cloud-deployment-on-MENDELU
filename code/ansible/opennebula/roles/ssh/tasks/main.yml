@@ -1,22 +1,7 @@
 ---
-- name: Copy SSH private key
-  ansible.builtin.copy:
-    src: id_rsa
-    dest: /var/lib/one/.ssh/id_rsa
-    owner: oneadmin
-    group: oneadmin
-    mode: "0600"
-- name: Copy SSH public key
-  ansible.builtin.copy:
-    src: id_rsa.pub
-    dest: /var/lib/one/.ssh/id_rsa.pub
-    owner: oneadmin
-    group: oneadmin
-    mode: "0600"
-- name: Copy authorized_keys file
-  ansible.builtin.copy:
-    src: authorized_keys
-    dest: /var/lib/one/.ssh/authorized_keys
-    owner: oneadmin
-    group: oneadmin
-    mode: "0600"
+# Společné musí být asi jen tohle
+- name: Add One key to authorized_keys
+  ansible.posix.authorized_key:
+    user: oneadmin
+    state: present
+    key: "{{ lookup('file', 'id_rsa.pub') }}"

@@ -1,0 +1,38 @@
+- name: Install Ceph
+  ansible.builtin.dnf:
+    name:
+      - centos-release-ceph-quincy
+    state: present
+- name: Install Cephadm
+  ansible.builtin.dnf:
+    name:
+      - cephadm
+      - ceph-common
+    state: present
+- name: Copy SSH private key
+  ansible.builtin.copy:
+    src: ceph
+    dest: /root/.ssh/ceph
+    owner: root
+    group: root
+    mode: "0600"
+- name: Copy SSH public key
+  ansible.builtin.copy:
+    src: ceph.pub
+    dest: /root/.ssh/ceph.pub
+    owner: root
+    group: root
+    mode: "0600"
+- name: Add Ceph key to authorized_keys
+  ansible.posix.authorized_key:
+    user: root
+    state: present
+    key: "{{ lookup('file', 'ceph.pub') }}"
+- name: Bootstrap cluster
+  ansible.builtin.shell: cephadm bootstrap --mon-ip {{ mon }} --allow-fqdn-hostname --ssh-private-key ~/.ssh/ceph --ssh-public-key ~/.ssh/ceph.pub --initial-dashboard-user "{{ username }}" --initial-dashboard-password "{{ password }}" --dashboard-password-noupdate
+- name: Always add all available storage
+  ansible.builtin.shell: ceph orch apply osd --all-available-devices
+- name: Create pool
+  ansible.builtin.shell: ceph osd pool create one
+# - name: Initalize pool
+#   ansible.builtin.shell: rbd pool init one

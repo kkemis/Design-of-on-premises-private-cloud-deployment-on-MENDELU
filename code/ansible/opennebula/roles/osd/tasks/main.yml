@@ -1,0 +1,45 @@
+# Společné musí být asi jen tohle
+- name: Add Ceph key to authorized_keys
+  ansible.posix.authorized_key:
+    user: root
+    state: present
+    key: "{{ lookup('file', 'ceph.pub') }}"
+- name: Install pip
+  ansible.builtin.dnf:
+    name:
+      - pip
+- name: Install pyone
+  ansible.builtin.pip:
+    name:
+      - requests
+- name: Install Ceph repo
+  ansible.builtin.dnf:
+    name:
+      - centos-release-ceph-quincy
+- name: Install Ceph client
+  ansible.builtin.dnf:
+    name:
+      - ceph-common
+- name: Install Podman
+  ansible.builtin.dnf:
+    name:
+      - podman
+- name: Start podman
+  ansible.builtin.service:
+    name: podman
+    state: started
+    enabled: true
+- name: Copy config.json
+  ansible.builtin.template:
+    src: config.json.j2
+    dest: ~/config.json
+    owner: root
+    group: root
+    mode: "0600"
+- name: Join cluster
+  ansible.builtin.script: api.py 
+  args:
+    executable: python3
+# ansible_facts['{{ interface }}']['ipv4']['address']
+
+# api.py "{{ username }}" "{{ password }}" {{hostvars[inventory_hostname]['ansible_'~interface].ipv4.address}} "{{ monitor }}" "{{ ansible_fqdn }}"

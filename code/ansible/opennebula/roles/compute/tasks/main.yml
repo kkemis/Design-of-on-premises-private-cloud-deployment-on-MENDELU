@@ -6,12 +6,26 @@
   ansible.builtin.dnf:
     name:
       - opennebula-node-kvm
+- name: Install pyone
+  ansible.builtin.pip:
+    name:
+      - pyone
+- name: Set-up SSH
+  ansible.builtin.include_role:
+    name: ssh
 - name: Restart libvirtd service
   ansible.builtin.service:
     name: libvirtd
     state: restarted
     enabled: true
-- name: Join cluster
-  become: true
-  become_user: oneadmin
-  ansible.builtin.shell: ssh oneadmin@{{ endpoint }} "onehost create $HOSTNAME -i kvm -v kvm"
+- name: Create a new host in OpenNebula
+  community.general.one_host:
+    name: "{{ ansible_fqdn }}"
+    cluster_id: 0
+    api_url: http://{{ endpoint }}:2633/RPC2
+    api_password: "{{ adminpassword }}"
+    api_username: "{{ username }}"
+# - name: Join cluster
+#   become: true
+#   become_user: oneadmin
+#   ansible.builtin.shell: ssh oneadmin@{{ endpoint }} "onehost create $HOSTNAME -i kvm -v kvm"

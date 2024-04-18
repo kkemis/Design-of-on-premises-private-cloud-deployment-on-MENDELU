@@ -1,2 +1,4 @@
 ---
 endpoint: onetest.example.com
+username: oneadmin
+adminpassword: changeme123
