@@ -6,7 +6,7 @@
 - name: Add EPEL repo
   ansible.builtin.dnf:
     name:
-      - epel-release
+      - epel-release-9
 - name: Add OpenNebula repo
   ansible.builtin.yum_repository:
     name: opennebula
@@ -19,7 +19,7 @@
 - name: Install pip
   ansible.builtin.dnf:
     name:
-      - pip
+      - python3-pip-21.2.3
 - name: Disable SELinux
   ansible.posix.selinux:
     state: disabled

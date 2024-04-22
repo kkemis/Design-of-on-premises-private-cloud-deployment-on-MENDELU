@@ -1,13 +1,22 @@
+- name: Install Podman
+  ansible.builtin.dnf:
+    name:
+      - podman-4.6.1
+- name: Start podman
+  ansible.builtin.service:
+    name: podman
+    state: started
+    enabled: true
 - name: Install Ceph
   ansible.builtin.dnf:
     name:
-      - centos-release-ceph-quincy
+      - centos-release-ceph-quincy-1.0
     state: present
 - name: Install Cephadm
   ansible.builtin.dnf:
     name:
-      - cephadm
-      - ceph-common
+      - cephadm-17.2.7
+      - ceph-common-17.2.7
     state: present
 - name: Copy SSH private key
   ansible.builtin.copy:
@@ -29,10 +38,22 @@
     state: present
     key: "{{ lookup('file', 'ceph.pub') }}"
 - name: Bootstrap cluster
-  ansible.builtin.shell: cephadm bootstrap --mon-ip {{ mon }} --allow-fqdn-hostname --ssh-private-key ~/.ssh/ceph --ssh-public-key ~/.ssh/ceph.pub --initial-dashboard-user "{{ username }}" --initial-dashboard-password "{{ password }}" --dashboard-password-noupdate
+  ansible.builtin.shell: cephadm bootstrap --mon-ip {{ mon }} --allow-fqdn-hostname --ssh-private-key ~/.ssh/ceph --ssh-public-key ~/.ssh/ceph.pub --initial-dashboard-user "{{ username }}" --initial-dashboard-password "{{ password }}" --dashboard-password-noupdate --fsid "{{ fsid }}"
+  ignore_errors: true
 - name: Always add all available storage
   ansible.builtin.shell: ceph orch apply osd --all-available-devices
 - name: Create pool
   ansible.builtin.shell: ceph osd pool create one
+- name: Associate RDB
+  ansible.builtin.shell: ceph osd pool application enable one rdb
+- name: Copy libvirt user keyring
+  ansible.builtin.copy:
+    src: ceph.client.libvirt.keyring
+    dest: ~/
+    owner: root
+    group: root
+    mode: "0600"
+- name: Import libvirt user
+  ansible.builtin.shell: ceph auth import -i ~/ceph.client.libvirt.keyring
 # - name: Initalize pool
 #   ansible.builtin.shell: rbd pool init one

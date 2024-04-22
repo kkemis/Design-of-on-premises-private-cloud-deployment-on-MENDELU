@@ -4,13 +4,23 @@
 #   remote_user: root
 #   roles:
 #     - common
-- name: Configure and deploy front-end
+# - name: Configure and deploy monitors
+#   hosts: monitors
+#   remote_user: root
+#   roles:
+#     - monitor
+- name: Configure and deploy controllers
   hosts: controllers
   remote_user: root
   roles:
-    - monitor
-- name: Configure and deploy compute
-  hosts: computes
-  remote_user: root
-  roles:
-    - osd
+    - controller
+# - name: Configure and deploy computes
+#   hosts: computes
+#   remote_user: root
+#   roles:
+#     - compute
+# - name: Configure and deploy osds
+#   hosts: osds
+#   remote_user: root
+#   roles:
+#     - osd

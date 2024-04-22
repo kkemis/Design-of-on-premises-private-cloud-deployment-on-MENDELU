@@ -1,4 +1,11 @@
 ---
-endpoint: onetest.example.com
-username: oneadmin
+endpoint: controller.example.com
+adminname: oneadmin
 adminpassword: changeme123
+fsid: 9c8e1988-ff5c-11ee-afe9-52540034dca9
+monitor: 192.168.100.4
+secret_value: AQCPbCFmxPkRIxAAf03KhJXG1f2G5h4ikRbXWw==
+uuid: b1602965-213e-4cdb-a5cb-928a550a77ca
+datastores: 
+  - cephsys
+  - cephimg

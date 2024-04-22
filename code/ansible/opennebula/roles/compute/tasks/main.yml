@@ -2,14 +2,23 @@
 - name: Update system and set-up repos
   ansible.builtin.include_role:
     name: common
+- name: Install Ceph repo
+  ansible.builtin.dnf:
+    name:
+      - centos-release-ceph-quincy-1.0
+- name: Install Ceph client
+  ansible.builtin.dnf:
+    name:
+      - ceph-common-17.2.7
 - name: Install OpenNebula kvm package
   ansible.builtin.dnf:
     name:
-      - opennebula-node-kvm
+      - opennebula-node-kvm-6.8.0
 - name: Install pyone
   ansible.builtin.pip:
     name:
-      - pyone
+      - pyone==6.8.3
+      - pyyaml==5.4.1
 - name: Set-up SSH
   ansible.builtin.include_role:
     name: ssh
@@ -18,14 +27,62 @@
     name: libvirtd
     state: restarted
     enabled: true
-- name: Create a new host in OpenNebula
-  community.general.one_host:
-    name: "{{ ansible_fqdn }}"
-    cluster_id: 0
-    api_url: http://{{ endpoint }}:2633/RPC2
-    api_password: "{{ adminpassword }}"
-    api_username: "{{ username }}"
+# - name: Create a new host in OpenNebula
+#   community.general.one_host:
+#     name: "{{ ansible_fqdn }}"
+#     cluster_id: 0
+#     api_url: http://{{ endpoint }}:2633/RPC2
+#     api_password: "{{ adminpassword }}"
+#     api_username: "{{ username }}"
+  ignore_errors: true
+- name: Copy libvirt keyring
+  ansible.builtin.copy:
+    src: ceph.client.libvirt.keyring
+    dest: /etc/ceph/ceph.client.libvirt.keyring
+    owner: oneadmin
+    group: oneadmin
+    mode: "0600"
+- name: Copy ceph.conf
+  ansible.builtin.template:
+    src: ceph.conf.j2
+    dest: /etc/ceph/ceph.conf
+    owner: root
+    group: root
+    mode: "0644"
+- name: Copy secret.xml
+  ansible.builtin.template:
+    src: secret.xml.j2
+    dest: /var/lib/one/secret.xml
+    owner: oneadmin
+    group: oneadmin
+    mode: "0644"
+# - name: Copy libvirt key
+#   ansible.builtin.copy:
+#     src: client.libvirt.key
+#     dest: /var/lib/one/client.libvirt.key
+#     owner: oneadmin
+#     group: oneadmin
+#     mode: "0600"
+- name: Define libvirt secret
+  become: true
+  become_user: oneadmin
+  ansible.builtin.shell: virsh -c qemu:///system secret-define /var/lib/one/secret.xml
+- name: Set libvirt secret value
+  become: true
+  become_user: oneadmin
+  ansible.builtin.shell: virsh -c qemu:///system secret-set-value --secret {{ uuid }} --base64 {{ secret_value }}
 # - name: Join cluster
 #   become: true
 #   become_user: oneadmin
 #   ansible.builtin.shell: ssh oneadmin@{{ endpoint }} "onehost create $HOSTNAME -i kvm -v kvm"
+- name: Copy config.json
+  ansible.builtin.template:
+    src: config.yml.j2
+    dest: ~/config.yml
+    owner: root
+    group: root
+    mode: "0600"
+- name: Join cluster and datastores
+  ansible.builtin.script: datastore.py 
+  args:
+    executable: python3

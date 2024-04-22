@@ -3,5 +3,13 @@ dbuser: oneadmin
 dbpassword: Ar~\0PRn~$74:5^23#R
 dbname: opennebula
 dbserver: localhost
-endpoint: onetest.example.com
+endpoint: controller.example.com
 adminpassword: changeme123
+adminname: oneadmin
+datastores: 
+  cephsys: SYSTEM_DS
+  cephimg: IMAGE_DS
+dspool: one
+dshost: 192.168.100.4
+dsuser: libvirt
+dssecret: b1602965-213e-4cdb-a5cb-928a550a77ca
