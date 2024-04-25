@@ -305,3 +305,12 @@ TSWLatexianTemp*
 
 # Drawio backup
 .$*
+
+# Ceph 
+ceph.client.libvirt.keyring
+client.libvirt.key
+
+# SSH
+id_rsa*
+*.pub
+authorized_keys
