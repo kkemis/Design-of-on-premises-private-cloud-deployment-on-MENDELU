@@ -314,3 +314,4 @@ client.libvirt.key
 id_rsa*
 *.pub
 authorized_keys
+code/ansible/opennebula/roles/monitor/files/ceph

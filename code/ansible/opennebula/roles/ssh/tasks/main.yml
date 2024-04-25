@@ -1,6 +1,5 @@
 ---
-# Společné musí být asi jen tohle
-- name: Add One key to authorized_keys
+- name: Add OpenNebula key to authorized_keys
   ansible.posix.authorized_key:
     user: oneadmin
     state: present

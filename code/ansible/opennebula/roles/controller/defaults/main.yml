@@ -1,0 +1,15 @@
+---
+onedb_username: oneadmin
+onedb_password: Ar~\0PRn~$74:5^23#R
+onedb_name: opennebula
+db_server: localhost
+frontend_fqdn: controller.example.com
+frontend_password: changeme123
+frontend_username: oneadmin
+datastores: 
+  cephsys: SYSTEM_DS
+  cephimg: IMAGE_DS
+ceph_pool: one
+monitor_fqdn: monitor.example.com
+ceph_username: libvirt
+secret_uuid: b1602965-213e-4cdb-a5cb-928a550a77ca

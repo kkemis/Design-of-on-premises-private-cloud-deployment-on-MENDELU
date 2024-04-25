@@ -1,5 +1,5 @@
 ---
-username: {{ username }}
-password: {{ password }}
-monitor: {{ monitor }}
-ip: "{{ hostvars[inventory_hostname]['ansible_'~interface].ipv4.address }}"
+dashboard_username: {{ dashboard_username }}
+dashboard_password: {{ dashboard_password }}
+monitor_fqdn: {{ monitor_fqdn }}
+storage_ip: "{{ hostvars[inventory_hostname]['ansible_'~storage_nic].ipv4.address }}"

@@ -1,0 +1,11 @@
+---
+frontend_fqdn: controller.example.com
+frontend_username: oneadmin
+frontend_password: changeme123
+fsid: 9c8e1988-ff5c-11ee-afe9-52540034dca9
+monitor_fqdn: monitor.example.com
+secret_value: AQCPbCFmxPkRIxAAf03KhJXG1f2G5h4ikRbXWw==
+secret_uuid: b1602965-213e-4cdb-a5cb-928a550a77ca
+datastores: 
+  - cephsys
+  - cephimg

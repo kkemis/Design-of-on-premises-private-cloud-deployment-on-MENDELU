@@ -1,0 +1,4 @@
+storage_nic: enp1s0
+dashboard_username: admin
+dashboard_password: Passw0rd
+monitor_fqdn: monitor.example.com
