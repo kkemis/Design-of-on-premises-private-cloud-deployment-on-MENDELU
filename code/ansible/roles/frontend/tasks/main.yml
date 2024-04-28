@@ -1,0 +1,122 @@
+---
+- name: Update system and set-up repos
+  ansible.builtin.include_role:
+    name: helper/one/common
+- name: Install MySQL server and dependencies
+  ansible.builtin.dnf:
+    name:
+      - mysql-8.0.36
+      - mysql-server-8.0.36
+      - python3-devel-3.9.18
+      - mysql-devel-8.0.36
+      - pkgconf-pkg-config-1.7.3
+      - gcc-11.4.1
+    enablerepo: crb
+    state: present
+- name: Install mysqlclient for Ansible
+  ansible.builtin.pip:
+    name:
+      - mysqlclient==2.2.4
+- name: Start MySQL database
+  ansible.builtin.service:
+    name: mysqld
+    state: started
+    enabled: true
+- name: Create database for OpenNebula
+  community.mysql.mysql_db:
+    name: "{{ onedb_name }}"
+    state: present
+- name: Create database user for  OpenNebula 
+  community.mysql.mysql_user:
+    state: present
+    name: "{{ onedb_username }}"
+    password: "{{ onedb_password }}"
+    priv: "{{ onedb_name }}.*:ALL,GRANT"
+- name: Install OpenNebula front-end packages
+  ansible.builtin.dnf:
+    name:
+      - opennebula-6.8.0
+      - opennebula-sunstone-6.8.0
+      - opennebula-fireedge-6.8.0
+      - opennebula-gate-6.8.0
+      - opennebula-flow-6.8.0
+      - opennebula-provision-6.8.0
+- name: Set up SSH
+  ansible.builtin.include_role:
+    name: helper/one/ssh
+- name: Copy SSH private key
+  ansible.builtin.copy:
+    src: id_rsa
+    dest: /var/lib/one/.ssh/id_rsa
+    owner: oneadmin
+    group: oneadmin
+    mode: "0600"
+- name: Copy OpenNebula Daemon configuration file
+  ansible.builtin.template:
+    src: oned.conf.j2
+    dest: /etc/one/oned.conf
+    owner: root
+    group: oneadmin
+    mode: "0640"
+- name: Copy OneFlow configuration file
+  ansible.builtin.template:
+    src: oneflow-server.conf.j2
+    dest: /etc/one/oneflow-server.conf
+    owner: root
+    group: oneadmin
+    mode: "0640"
+- name: Copy OneGate configuration file
+  ansible.builtin.template:
+    src: onegate-server.conf.j2
+    dest: /etc/one/onegate-server.conf
+    owner: root
+    group: oneadmin
+    mode: "0640"
+- name: Copy Sunstone configuration file
+  ansible.builtin.template:
+    src: sunstone-server.conf.j2
+    dest: /etc/one/sunstone-server.conf
+    owner: root
+    group: oneadmin
+    mode: "0640"
+- name: Set GUI password
+  ansible.builtin.lineinfile:
+    path: /var/lib/one/.one/one_auth
+    regexp: "^oneadmin:"
+    line: "{{ frontend_username }}:{{ frontend_password }}"
+- name: Start opennebula service
+  ansible.builtin.service:
+    name: opennebula
+    state: started
+    enabled: true
+- name: Start Sunstone service
+  ansible.builtin.service:
+    name: opennebula-sunstone
+    state: started
+    enabled: true
+- name: Start FireEdge service
+  ansible.builtin.service:
+    name: opennebula-fireedge
+    state: started
+    enabled: true
+- name: Start OneGate service
+  ansible.builtin.service:
+    name: opennebula-gate
+    state: started
+    enabled: true
+- name: Start OneFlow service
+  ansible.builtin.service:
+    name: opennebula-flow
+    state: started
+    enabled: true
+- name: Copy init_controller.py configuration file
+  ansible.builtin.template:
+    src: config.yml.j2
+    dest: ~/config.yml
+    owner: root
+    group: root
+    mode: "0600"
+- name: Create datastores
+  ansible.builtin.script: init_controller.py 
+  args:
+    executable: python3

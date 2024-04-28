@@ -1,0 +1,13 @@
+---
+- name: Copy SSH public key
+  ansible.builtin.copy:
+    src: id_rsa.pub
+    dest: /var/lib/one/.ssh/id_rsa.pub
+    owner: oneadmin
+    group: oneadmin
+    mode: "0600"
+- name: Add OpenNebula key to authorized_keys
+  ansible.posix.authorized_key:
+    user: oneadmin
+    state: present
+    key: "{{ lookup('file', 'id_rsa.pub') }}"

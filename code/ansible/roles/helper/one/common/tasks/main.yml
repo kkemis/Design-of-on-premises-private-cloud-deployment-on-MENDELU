@@ -1,0 +1,30 @@
+---
+# - name: Update all packages to latest
+#   ansible.builtin.dnf:
+#     name: "*"
+#     state: latest
+- name: Add EPEL repo
+  ansible.builtin.dnf:
+    name:
+      - epel-release-9
+- name: Add OpenNebula repo
+  ansible.builtin.yum_repository:
+    name: opennebula
+    description: OpenNebula Community Edition
+    baseurl: https://downloads.opennebula.io/repo/6.8/AlmaLinux/$releasever/$basearch
+    enabled: true
+    gpgkey: https://downloads.opennebula.io/repo/repo2.key
+    gpgcheck: true
+    repo_gpgcheck: true
+- name: Disable SELinux
+  ansible.posix.selinux:
+    state: disabled
+- name: Install pip
+  ansible.builtin.dnf:
+    name:
+      - python3-pip-21.2.3      
+- name: Install pyone
+  ansible.builtin.pip:
+    name:
+      - pyone==6.8.3
+      - pyyaml==5.4.1

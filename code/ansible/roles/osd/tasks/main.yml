@@ -1,0 +1,21 @@
+- name: Apply common Ceph configuration 
+  ansible.builtin.include_role:
+    name: helper/ceph/common
+- name: Set up Python
+  ansible.builtin.include_role:
+    name: helper/pip
+- name: Install init_osd.py dependencies
+  ansible.builtin.pip:
+    name:
+      - requests==2.31.0
+- name: Copy init_osd.py configuration file
+  ansible.builtin.template:
+    src: config.yml.j2
+    dest: ~/config.yml
+    owner: root
+    group: root
+    mode: "0600"
+- name: Initialize osd
+  ansible.builtin.script: init_osd.py 
+  args:
+    executable: python3

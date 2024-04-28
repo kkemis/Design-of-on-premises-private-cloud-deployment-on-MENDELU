@@ -1,0 +1,39 @@
+- name: Apply common Ceph configuration 
+  ansible.builtin.include_role:
+    name: helper/ceph/common
+- name: Install Ceph repositry
+  ansible.builtin.dnf:
+    name:
+      - centos-release-ceph-quincy-1.0
+    state: present
+- name: Install required Ceph packages
+  ansible.builtin.dnf:
+    name:
+      - cephadm-17.2.7
+      - ceph-common-17.2.7
+    state: present
+- name: Copy SSH private key
+  ansible.builtin.copy:
+    src: ceph
+    dest: /root/.ssh/ceph
+    owner: root
+    group: root
+    mode: "0600"
+- name: Bootstrap Ceph cluster
+  ansible.builtin.shell: cephadm bootstrap --mon-ip {{ hostvars[inventory_hostname]['ansible_'~storage_nic].ipv4.address }} --allow-fqdn-hostname --ssh-private-key ~/.ssh/ceph --ssh-public-key ~/.ssh/ceph.pub --initial-dashboard-user "{{ dashboard_username }}" --initial-dashboard-password "{{ dashboard_password }}" --dashboard-password-noupdate --fsid "{{ fsid }}"
+  ignore_errors: true
+- name: Accept all available osd storage
+  ansible.builtin.shell: ceph orch apply osd --all-available-devices
+- name: Create pool
+  ansible.builtin.shell: ceph osd pool create one
+- name: Associate RDB
+  ansible.builtin.shell: ceph osd pool application enable one rdb
+- name: Copy libvirt user keyring
+  ansible.builtin.copy:
+    src: ceph.client.libvirt.keyring
+    dest: ~/
+    owner: root
+    group: root
+    mode: "0600"
+- name: Import libvirt user
+  ansible.builtin.shell: ceph auth import -i ~/ceph.client.libvirt.keyring
