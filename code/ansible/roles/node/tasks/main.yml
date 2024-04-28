@@ -22,6 +22,11 @@
     name: libvirtd
     state: restarted
     enabled: true
+- name: Enable virtsecretd service
+  ansible.builtin.service:
+    name: virtsecretd
+    state: started
+    enabled: true
   ignore_errors: true
 - name: Copy libvirt keyring
   ansible.builtin.copy:
