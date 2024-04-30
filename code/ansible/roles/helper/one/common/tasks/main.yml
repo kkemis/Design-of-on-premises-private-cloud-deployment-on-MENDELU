@@ -20,7 +20,7 @@
   ansible.builtin.dnf:
     name:
       - python3-pip-21.2.3      
-- name: Install pyone
+- name: Install Python dependencies
   ansible.builtin.pip:
     name:
       - pyone==6.8.3
