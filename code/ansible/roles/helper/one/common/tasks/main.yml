@@ -16,9 +16,6 @@
     gpgkey: https://downloads.opennebula.io/repo/repo2.key
     gpgcheck: true
     repo_gpgcheck: true
-- name: Disable SELinux
-  ansible.posix.selinux:
-    state: disabled
 - name: Install pip
   ansible.builtin.dnf:
     name:
