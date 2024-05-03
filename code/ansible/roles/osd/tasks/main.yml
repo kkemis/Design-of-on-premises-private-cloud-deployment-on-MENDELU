@@ -1,9 +1,14 @@
 - name: Apply common Ceph configuration 
   ansible.builtin.include_role:
     name: helper/ceph/common
-- name: Set up Python
-  ansible.builtin.include_role:
-    name: helper/pip
+- name: Install pip
+  ansible.builtin.dnf:
+    name:
+      - python3-pip-21.2.3
+- name: Install pyyaml
+  ansible.builtin.pip:
+    name:
+      - pyyaml==5.4.1
 - name: Install init_osd.py dependencies
   ansible.builtin.pip:
     name:

@@ -18,7 +18,7 @@ for datastore in datastorepool.DATASTORE:
     if datastore.NAME in config["datastores"]:
         bridges = datastore.TEMPLATE["BRIDGE_LIST"]
         bridge = str(socket.gethostname())
-        if bridges != "NONE":
+        if bridges != "NONE" or "":
             bridge = bridges + " " + bridge
         template = {"BRIDGE_LIST": bridge}
         one.datastore.update(datastore.ID, template, 1)
