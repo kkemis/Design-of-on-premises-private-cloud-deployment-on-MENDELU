@@ -10,6 +10,24 @@
   ansible.builtin.dnf:
     name:
       - ceph-common-17.2.7
+- name: Add Docker repository
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/
+    mode: "0644"
+- name: Install Docker
+  ansible.builtin.dnf:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+- name: Start and enable Docker service
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
 - name: Install OpenNebula kvm node package
   ansible.builtin.dnf:
     name:
@@ -27,7 +45,6 @@
     name: virtsecretd
     state: started
     enabled: true
-  ignore_errors: true
 - name: Copy libvirt keyring
   ansible.builtin.copy:
     src: ceph.client.libvirt.keyring

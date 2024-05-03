@@ -11,12 +11,21 @@
     user: root
     state: present
     key: "{{ lookup('file', 'ceph.pub') }}"
-- name: Install Podman
+- name: Add Docker repository
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/
+    mode: "0644"
+- name: Install Docker
   ansible.builtin.dnf:
     name:
-      - podman-4.6.1
-- name: Start podman
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+- name: Start and enable Docker service
   ansible.builtin.service:
-    name: podman
+    name: docker
     state: started
     enabled: true

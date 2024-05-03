@@ -5,14 +5,11 @@
   ansible.builtin.dnf:
     name:
       - python3-pip-21.2.3
-- name: Install pyyaml
-  ansible.builtin.pip:
-    name:
-      - pyyaml==5.4.1
 - name: Install init_osd.py dependencies
   ansible.builtin.pip:
     name:
       - requests==2.31.0
+      - pyyaml==5.4.1
 - name: Copy init_osd.py configuration file
   ansible.builtin.template:
     src: config.yml.j2
