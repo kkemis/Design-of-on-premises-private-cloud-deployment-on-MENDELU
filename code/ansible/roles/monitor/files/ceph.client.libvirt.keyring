@@ -1,0 +1,4 @@
+[client.libvirt]
+	key = AQCPbCFmxPkRIxAAf03KhJXG1f2G5h4ikRbXWw==
+	caps mon = "profile rbd"
+	caps osd = "profile rbd pool=one"

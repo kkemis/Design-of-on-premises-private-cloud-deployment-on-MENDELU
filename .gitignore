@@ -307,7 +307,6 @@ TSWLatexianTemp*
 .$*
 
 # Ceph 
-ceph.client.libvirt.keyring
 client.libvirt.key
 
 # SSH
