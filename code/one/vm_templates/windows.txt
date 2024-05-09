@@ -1,0 +1,40 @@
+
+
+CONTEXT = [
+  NETWORK = "YES",
+  PASSWORD_BASE64 = "$USER_PASSWORD",
+  SET_HOSTNAME = "$NAME",
+  SSH_PUBLIC_KEY = "$USER[SSH_PUBLIC_KEY]",
+  USERNAME = "$UNAME",
+  USER_PASSWORD = "$USER_PASSWORD" ]
+CPU = "2"
+DISK = [
+  DEV_PREFIX = "vd",
+  IMAGE = "Windows 10",
+  IMAGE_UNAME = "oneadmin" ]
+GRAPHICS = [
+  LISTEN = "0.0.0.0",
+  TYPE = "VNC" ]
+HOT_RESIZE = [
+  CPU_HOT_ADD_ENABLED = "NO",
+  MEMORY_HOT_ADD_ENABLED = "NO" ]
+INPUT = [
+  BUS = "usb",
+  TYPE = "tablet" ]
+MEMORY = "2048"
+MEMORY_RESIZE_MODE = "BALLOONING"
+MEMORY_UNIT_COST = "MB"
+NIC = [
+  NETWORK = "vnet",
+  NETWORK_UNAME = "oneadmin",
+  SECURITY_GROUPS = "0" ]
+NIC_DEFAULT = [
+  MODEL = "virtio" ]
+OS = [
+  BOOT = "disk0",
+  FIRMWARE = "",
+  FIRMWARE_SECURE = "YES" ]
+USER_INPUTS = [
+  USER_PASSWORD = "M|text64|Password| |" ]
+VCPU = "2"
+
